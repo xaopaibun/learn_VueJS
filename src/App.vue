@@ -2,8 +2,10 @@
   <img alt="Vue logo" src="./assets/logo.png">
   <Todo :number=number @clicked-submit="handleSubmitParent"></Todo>
   <div>name: {{name}}</div>
-  <h1>Data length: {{listProduct.length}}</h1>
-  <a-table :dataSource="listProduct" :columns="columns">
+  <div v-bind="objectOfAttrs">Test objectOfAttrs</div>
+  <button @click="increment" >{{ count }}</button>
+  <h1 class="text-status">IsProduct: {{publishedListProduct}}</h1>
+  <a-table :dataSource="listProduct" :columns="columns" v-if="listProduct">
     <template v-slot:image-column="image" >
       <td>
         <img :src="image" style="width: 50px; height: 50px" />
@@ -16,6 +18,7 @@
 import Todo from './components/Todo.vue';
 import axios from 'axios';
 import 'ant-design-vue/dist/antd.css';
+import { nextTick } from 'vue';
 export default {
   name: 'App',
   components: {
@@ -25,7 +28,12 @@ export default {
     return {
       name: '',
       number: 200,
+      count: 0,
       listProduct: [],
+      objectOfAttrs: {
+        id: 'container',
+        class: 'wrapper'
+      },
       columns: [
           {
             title: 'title',
@@ -57,9 +65,20 @@ export default {
     }
   },
   methods: {
-    handleSubmitParent: function (name) {
+    handleSubmitParent(name) {
       this.name = name;
-    }
+    },
+    increment() {
+      this.count++
+    },
+  },
+  computed: {
+    publishedListProduct() {
+      return this.listProduct.length > 0 ? 'Yes' : 'No'
+    },
+  },
+  created() {
+    console.log(`the component is now created.`)
   },
   mounted() {
     console.log(`the component is now mounted.`);
@@ -67,9 +86,10 @@ export default {
       const { data } = await axios.get("https://fakestoreapi.com/products");
       this.listProduct = data;
     })()
-  },
-  created() {
-    console.log(`the component is now created.`)
+    nextTick(() => {
+      console.log('I will be displayed once the next DOM update cycle is complete');
+      // access updated DOM
+    })
   },
 }
 </script>
@@ -82,5 +102,8 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.text-status{
+  color: gray;
 }
 </style>
