@@ -3,7 +3,7 @@
       <h1 class="text-status">IsProduct: {{publishedListProduct}}</h1>
       <a-table :dataSource="listProduct" :columns="columns" v-if="listProduct">
         <template v-slot:image-column="image" >
-            <img :src="image" alt="abc" />
+            <img :src="image" />
         </template>
       </a-table>
     </SideBar>
